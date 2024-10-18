@@ -1,0 +1,17 @@
+<% layout('layouts/boilerplate') %>
+
+<body>
+    <h1><%= listing.title %></h1>
+    <p><strong>Description:</strong> <%= listing.description %></p>
+    <p><strong>Price:</strong> $<%= listing.price %></p>
+    <p><strong>Location:</strong> <%= listing.location %>, <%= listing.country %></p>
+    <img src="<%= listing.image.url %>" alt="<%= listing.title %> Image" style="max-width: 100%;" onerror="this.onerror=null; this.src='/images/fallback-image.jpg';">
+    
+    <br>
+    <a href="/listings/<%= listing._id %>/edit">UPDATE DETAILS</a>
+    <br>
+    <form method="POST" action="/listings/<%=listing._id %>?_method=DELETE">
+        <button type="submit">Delete Listing</button>
+    </form>
+</body>
+

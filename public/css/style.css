@@ -1,0 +1,269 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0fc2ea;
+}
+.row{
+  
+    border: #e714eb;
+}
+
+h1 {
+    color: rgb(225, 27, 27);
+    font-size: 2em;
+}
+
+main {
+    margin: 20px;
+}
+/* card */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+    border-radius: 10px; /* Rounds the card corners */
+    overflow: hidden; /* Ensures the image fits nicely inside the card */
+    flex-wrap: nowrap;
+    border: #none!important;
+    margin: bottom 2rem;
+   
+    
+}
+
+.card img {
+    width: 100%; /* Make sure the image fills the card width */
+    height: 200px; /* Set a fixed height for the image */
+    object-fit: cover; /* Ensures the image is cropped correctly */
+}
+
+.card-body {
+    padding: 0; /* Adds space around the content */
+    text-align: center; /* Centers the text */
+}
+
+.card-title {
+    font-size: 18px;
+    color: #000000; /* Darker text color */
+    text-decoration: none;
+} 
+
+.card-title a:hover {
+    text-decoration: underline; /* Underlines the link when hovered */
+}
+
+
+/* Header Styling */
+header {
+    background-color: #1e1e1e;
+    padding: 15px 0;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    border-radius: 15px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    border-radius: 3%;
+}
+
+.logo a {
+    color: #f0a500;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links ul li {
+    margin-right: 25px;
+}
+
+.nav-links ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-links ul li a:hover {
+    color: #f0a500;
+}
+
+/* Search Bar Styling */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    padding: 5px 10px;
+    border-radius: 25px;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    color: #fff;
+    padding: 5px;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar button {
+    background-color: #f0a500;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+.search-bar button i {
+    font-size: 16px;
+}
+
+.search-bar input::placeholder {
+    color: #ccc;
+}
+
+/* Call to Action Button */
+.cta .btn {
+    background-color: #f0a500;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.cta .btn:hover {
+    background-color: #d18e00;
+}
+
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-links ul {
+        flex-direction: column;
+    }
+
+    .nav-links ul li {
+        margin-bottom: 15px;
+    }
+
+    .search-bar {
+        margin-top: 10px;
+    }
+
+    .cta {
+        margin-top: 10px;
+    }
+}
+
+/* footer */
+footer {
+    background-color: #1e1e1e;
+    color: #fff;
+    padding: 40px 0;
+    position: relative;
+    width: 100%;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.footer-section {
+    width: 30%;
+}
+
+.footer-section h3 {
+    color: #f0a500;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-section p {
+    line-height: 1.5;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin: 10px 0;
+}
+
+.footer-section ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.footer-section ul li a:hover {
+    color: #f0a500;
+}
+
+.footer-section .social ul {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.footer-section .social ul li {
+    margin-right: 15px;
+}
+
+.footer-section .social ul li a {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.footer-section .social ul li a i {
+    margin-right: 10px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 20px;
+    background-color: #111;
+    border-top: 1px solid #333;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@media screen and (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
