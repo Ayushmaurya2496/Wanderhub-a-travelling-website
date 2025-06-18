@@ -1,22 +1,21 @@
-//schema
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema; 
+const Review = require("./review.js");
+const { string } = require("joi");
 
-const a = new mongoose.Schema({
+const listingSchema = new Schema({
     title: {
         type: String,
     },
     description: String,
     category: String,
     image: {
-        url: {
-            type: String,
-            default: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGFyaXMlMjBjYWZlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80",
-        },
-        filename: String,
+        url:String,
+        filename:String,
     },
     author: String,
     price: {
-        type: Number,  // Changed from String to Number
+        type: Number,  
     },
     date: {
         type: Date,
@@ -24,6 +23,22 @@ const a = new mongoose.Schema({
     },
     location: String,
     country: String,
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Review",
+        } // Comma was added here
+    ],
+    owner:{
+        type:Schema.Types.ObjectId,
+        ref: "User",
+    },
+});
+listingSchema.post("findOneAndDelete",async(listing)=>{
+    if (!listing) {
+        return res.status(404).send("Listing not found");
+    }
+    await Review.deleteMany({ _id: { $in: listing.reviews } });
 });
 
-module.exports = mongoose.model("Listing",a);
+module.exports = mongoose.model("Listing", listingSchema);

@@ -1,5 +1,118 @@
 <% layout('layouts/boilerplate') %>
-<br><br><br><br>
-<div>MOB
-<h5> 8881995988</h5>
-<h5>ayushmaurya216@gmail.com</h5></div>
+<br><br>
+<style>
+    
+    .contactcontainer {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px  #0056b3;
+        font-family: Arial, sans-serif;
+    }
+    
+    .contactheader {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    .contactcontact-info {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .contactcontact-info div {
+        flex: 1;
+    }
+    
+    .contactcontact-info h2 {
+        font-size: 22px;
+        color: #444;
+        margin-bottom: 10px;
+    }
+    
+    .contactcontact-info p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+    }
+    
+    .contactcontact-info a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .contactcontact-info a:hover {
+        text-decoration: underline;
+    }
+    
+    .contactform {
+        text-align: center;
+    }
+    
+    .contactform h2 {
+        font-size: 22px;
+        color: #444;
+        margin-bottom: 15px;
+    }
+    
+    .contactform input, .contactform textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    
+    .contactform button {
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    
+    .contactform button:hover {
+        background: #0056b3;
+    }
+    </style>
+    
+    <div class="contactcontainer">
+        <div class="contactheader">Contact Us </div>
+        <div class="contactcontact-info">
+            <div>
+                <h2>Get in Touch</h2>
+                <p><i class="contactphone"></i> Mobile: +91 8881995699</p>
+                <p><i class="contactemail"></i> Email: ayushmaurya216@gmail.com</p>
+                <p><i class="contactadd"></i> Address: Delhi, India</p>
+            </div>
+            <div>
+                <h2>Follow Us</h2>
+                <p>
+                    <a href="#"><i class="contactfacebook"></i> Facebook</a><br>
+                    <a href="#"><i class="contacttwitter"></i> Twitter</a><br>
+                    <a href="#"><i class="contactinstagram"></i> Instagram</a><br>
+                    <a href="a"><i class="contactlinkedin"></i> LinkedIn</a>
+                </p>
+            </div>
+        </div>
+        <div class="contactform">
+            <h2>Send Us a Message</h2>
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>

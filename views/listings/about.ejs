@@ -1,4 +1,76 @@
 <% layout('layouts/boilerplate') %>
 <br><br>
-<br><br>
-<h3>we provide the best places all around the world  to make your journey beautiful and full of joy</h3>
+<style>
+.about-section {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.about-section h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.about-section .row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.about-section img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-section p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.about-section button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.about-section button:hover {
+    background: #0056b3;
+}
+</style>
+
+<div class="container about-section">
+    <br>
+    <h2 class="text-center">About Us</h2>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <img href="https://wallpapershome.com/images/pages/pic_h/27222.jpg" alt=" image">
+                 class="img-fluid" alt="About us image">
+        </div>
+        <div class="col-md-6">
+            <p>
+                We provide the best places all around the world to make your journey beautiful and full of joy. Our platform brings together a curated list of accommodations, destinations, and experiences to ensure you have an unforgettable travel experience.
+            </p>
+            <p>
+                Whether you're seeking a cozy beach house, a mountain retreat, or a vibrant city stay, we offer something for every traveler's taste and preference. Explore our listings and embark on an adventure of a lifetime with us!
+            </p>
+            <button onclick="window.location.href='/listings'">Explore Our Listings</button>
+        </div>
+    </div>
+</div>
