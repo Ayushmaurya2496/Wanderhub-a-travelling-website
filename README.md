@@ -29,5 +29,7 @@
 
 ---
 
-## 📁 Project Structure
 
+WanderLust is my first full-stack web development project, inspired by my love for exploring and learning. It took me almost 6 months to understand different web components and technologies — from frontend frameworks to backend integration, database management, and user authentication.
+
+This project represents not only my technical growth but also my dedication to building something meaningful from scratch. Every feature you see here has been a result of multiple trials, hours of debugging, and countless cups of chai! ☕
