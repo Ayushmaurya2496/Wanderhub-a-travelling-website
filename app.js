@@ -1,7 +1,9 @@
-if (process.env.NODE_ENV!="production") {
-    require('dotenv').config(); 
-    
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
 }
+
+const port = process.env.PORT || 3000;
+
 
 
 // Step 1: Require necessary modules
@@ -81,14 +83,16 @@ passport.deserializeUser(User.deserializeUser());
 // Step 5: MongoDB Connection
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect(mongo_url);
-        console.log("✅ Database connected successfully");
-    } catch (err) {
-        console.error("❌ Error connecting to DB:", err);
-    }
-};
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => {
+    console.log("✅ MongoDB Atlas connected successfully");
+})
+.catch(err => {
+    console.error("❌ MongoDB connection error:", err);
+});
 connectDB();
 
 // Step 6: Utility Function (Optional for images)
@@ -132,6 +136,6 @@ app.get("/", (req, res) => {
 
 
 // Step 10: Start Server
-app.listen(5000, () => {
-    console.log('🚀 Server running on http://localhost:5000');
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
 });
