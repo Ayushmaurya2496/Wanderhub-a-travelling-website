@@ -93,7 +93,18 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch(err => {
     console.error("❌ MongoDB connection error:", err);
 });
-connectDB();
+// const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+
+// const connectDB = async () => {
+//     try {
+//         // await mongoose.connect(mongo_url);
+//         console.log("✅ Database connected successfully");
+//     } catch (err) {
+//         console.error("❌ Error connecting to DB:", err);
+//     }
+// };
+// connectDB();
+
 
 // Step 6: Utility Function (Optional for images)
 function extractUrlFromImageField(imageField) {
