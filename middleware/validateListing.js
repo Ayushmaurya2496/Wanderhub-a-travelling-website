@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Listing = require('../models/listing');
 const isLoggedIn = require('../middleware/isLoggedIn');
-const { validateListing } = require('../middleware/validateListing'); // <-- Import the validator middleware
+const { validateListing } = require('../middleware/validateListing'); 
 const wrapAsync = require('../utils/wrapAsync');
 
 router.post('/new', isLoggedIn, validateListing, wrapAsync(async (req, res, next) => {

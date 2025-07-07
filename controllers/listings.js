@@ -33,15 +33,15 @@ module.exports.createListing=async (req, res, next) => {
     try {
         let url=req.file.path;
         let filename=req.file.filename;
-        const newListing = new Listing(req.body);  // Create a new listing with submitted data
+        const newListing = new Listing(req.body);  
         newListing.image={url,filename};
     
-        newListing.owner = req.user._id;             // Set the listing's owner to the logged-in user
-        await newListing.save();                     // Save the new listing to the database
-        req.flash("success", "New Listing Created"); // Flash a success message
-        res.redirect('/listings');                   // Redirect to the listings page
+        newListing.owner = req.user._id;          
+        await newListing.save();                
+        req.flash("success", "New Listing Created"); 
+        res.redirect('/listings');            
     } catch (err) {
-        res.status(500).send('Error creating new listing'); // Handle any errors
+        res.status(500).send('Error creating new listing');
     }
 }
 module.exports.editForm=async (req, res) => {
@@ -64,7 +64,7 @@ module.exports.updateListing=async (req, res) => {
         res.status(500).send("Error updating listing");
     }
 }
-module.exports.destroyListing=async (req, res) => {//delete listing
+module.exports.destroyListing=async (req, res) => {
     try {
         await Listing.findByIdAndDelete(req.params.id);
         req.flash("success","Deleted Listing");

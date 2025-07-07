@@ -27,7 +27,7 @@ const listingSchema = new Schema({
         {
             type: Schema.Types.ObjectId,
             ref: "Review",
-        } // Comma was added here
+        } 
     ],
     owner:{
         type:Schema.Types.ObjectId,
@@ -41,4 +41,4 @@ listingSchema.post("findOneAndDelete",async(listing)=>{
     await Review.deleteMany({ _id: { $in: listing.reviews } });
 });
 
-module.exports = mongoose.model("Listing", listingSchema);
+module.exports= mongoose.model("Listing", listingSchema);

@@ -8,26 +8,22 @@ const listingController = require("../controllers/listings");
 const multer  = require('multer');
 const {storage}=require("../cloudconfig");
 const upload = multer({storage }) ;
-// ✅ Create listing
+
 router.route("/")
-    .get(wrapAsync(listingController.index))  // all listings (index page)
+    .get(wrapAsync(listingController.index)) 
     .post(
         isLoggedIn,
-        upload.single('listing[image]'),//multer process data
+        upload.single('listing[image]'),
         validateListing,
         wrapAsync(listingController.createListing)
     );
 
-// ✅ New Listing Form
 router.get('/new', isLoggedIn, listingController.renderNewForm);
 
-// ✅ GET, PUT, DELETE specific listing
 router.route("/:id")
     .get(wrapAsync(listingController.showListing))
     .put(isLoggedIn, isOwner, wrapAsync(listingController.updateListing))
     .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
-
-// ✅ Edit Listing Form
 router.get('/:id/edit', isLoggedIn, isOwner, wrapAsync(listingController.editForm));
 
 module.exports = router;

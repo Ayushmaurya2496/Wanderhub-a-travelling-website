@@ -25,10 +25,7 @@ module.exports.destroyReview=async (req, res) => {
     try {
         let { id, reviewId } = req.params;
 
-        // First remove reference of review from Listing
         await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-
-        // Now delete the review from the database
         await Review.findByIdAndDelete(reviewId);
         req.flash("success"," Listing review deleted");
         res.redirect(`/listings/${id}`);

@@ -7,17 +7,15 @@ const ExpressError = require("./utils/ExpressError");
 
 module.exports.isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
-        if (!req.session) req.session = {};  // ✅ Ensure session exists first
-        req.session.redirectUrl = req.originalUrl;  // ✅ Store redirect URL safely
+        if (!req.session) req.session = {};  
+        req.session.redirectUrl = req.originalUrl;  
         console.log("Stored redirectUrl in session:", req.session.redirectUrl); 
-
         req.flash("error", "Please log in to continue.");
         return res.redirect("/login");
     }
     next();
 };
 module.exports.validateListing = (req, res, next) => {
-    // For instance, check if required fields are present:
     const { title, price } = req.body;
     if (!title || !price) {
         req.flash("error", "Title and Price are required!");
@@ -37,11 +35,9 @@ module.exports.validateReview = (req, res, next) => {
     }
 };
 
-// saving url for redirect ,saving in variable
 module.exports.saveRedirectUrl = (req, res, next) => {
-    if (req.session.redirectUrl) {  // ✅ Use optional chaining to prevent errors
+    if (req.session.redirectUrl) { 
         res.locals.redirectUrl = req.session.redirectUrl;
-        // ✅ Remove after storing in locals
     }
     next();
 };
@@ -75,6 +71,5 @@ module.exports.isAuthor = async (req, res, next) => {
         return res.redirect("back");
     }
 
-    // ✅ If passed, go to next()
     next();
 };

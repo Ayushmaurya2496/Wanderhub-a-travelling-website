@@ -4,18 +4,18 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-- 🔍 Search and discover beautiful travel locations
-- 🗺️ View detailed pages of destinations with images and descriptions
-- 📌 Add your own custom places (CRUD operations)
-- ✅ User authentication (Register/Login)
-- 💬 Comment and review system (Optional Add-on)
-- 🌐 Responsive and simple UI using EJS templating
+-  Search and discover beautiful travel locations
+-  View detailed pages of destinations with images and descriptions
+-  Add your own custom places (CRUD operations)
+-  User authentication (Register/Login)
+-  Comment and review system (Optional Add-on)
+-  Responsive and simple UI using EJS templating
 
 ---
 
-## 💡 Tech Stack
+##  Tech Stack
 
 | Technology | Description |
 |------------|-------------|

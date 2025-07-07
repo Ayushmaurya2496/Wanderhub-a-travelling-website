@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const initData = require("./data.js");//
-const Listing = require("../models/listing.js");//schema 
+const Listing = require("../models/listing.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-//basic connection ka code
 main()
   .then(() => {
     console.log("connected to DB");
@@ -18,7 +17,7 @@ async function main() {
 
 
 const initDB = async () => {
-  await Listing.deleteMany({});//to delte prev data
+  await Listing.deleteMany({});
   initData.data = initData.data.map((obj) => ({
     ...obj,
     owner: "6800ebdadc7a8152984d5509",

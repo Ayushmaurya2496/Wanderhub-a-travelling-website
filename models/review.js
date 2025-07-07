@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
-    comment: String,  // ✅ "Comment" ka "c" small rakho (same as req.body.review.comment)
+    comment: String, 
     rating: {
         type: Number,
         min: 1,
