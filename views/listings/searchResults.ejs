@@ -1,0 +1,34 @@
+<% layout('layouts/boilerplate') %>
+
+<br>
+
+<body>
+    <div class="container">
+        <h2 class="mb-4">Search results for "<%= query %>"</h2>
+
+        <% if (listings.length === 0) { %>
+            <p>No destinations found for your search.</p>
+        <% } else { %>
+            <div class="row">
+                <% for (let listing of listings) { %>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card listing-card" style="width: 100%;">
+                            <a href="/listings/<%= listing._id %>">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image">
+                            </a>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <b><%= listing.title %></b><br>
+                                    ₹<%= listing.price %>/night<br>
+                                    <small class="text-muted">📍 <%= listing.location %>, <%= listing.country %></small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+        <a href="/listings" class="btn btn-secondary my-3">⬅ Back to All Listings</a>
+
+    </div>
+</body>

@@ -17,6 +17,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require('passport');
+const Listing = require('./models/listing'); 
 
 
 const LocalStrategy = require('passport-local');
@@ -107,10 +108,63 @@ app.get("/contact", (req, res) => {
 app.get("/about", (req, res) => {
     res.render('listings/about.ejs');
 });
-app.get("/", (req, res) => {
-    res.render('listings/home');
-});
+// app.get("/", (req, res) => {
+//     res.render('listings/home');
+// });
+app.get('/search', async (req, res) => {
+    try {
+        const query = req.query.q;
 
+        // case-insensitive partial match using RegExp
+        const regex = new RegExp(query, 'i');
+
+        const listings = await Listing.find({
+            $or: [
+                { location: regex },
+                { title: regex },
+                { country: regex }
+            ]
+        });
+
+        res.render('listings/searchResults', { listings, query });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+// #top rated
+app.get("/", async (req, res) => {
+ try {
+        const listings = await Listing.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: 'reviews',
+                    foreignField: '_id',
+                    as: 'reviewData'
+                }
+            },
+            {
+                $addFields: {
+                    totalReviews: { $size: "$reviewData" }
+                }
+            },
+            {
+                $sort: {
+                    rating: -1,
+                    totalReviews: -1
+                }
+            },
+            {
+                $limit: 6
+            }
+        ]);
+        res.render('listings/home', { topListings: listings }); // ✅ pass correctly
+    } catch (err) {
+        console.error("Error in getTopListings:", err);
+        res.status(500).send("Something went wrong");
+    }
+});
 
 
 app.listen(port, () => {

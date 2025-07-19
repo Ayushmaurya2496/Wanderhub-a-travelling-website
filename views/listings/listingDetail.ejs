@@ -9,7 +9,7 @@
     }
 
     .review-card {
-        background: #f8f9fa;
+        background: #fcfcfd;
         border-radius: 8px;
         padding: 10px 15px;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -22,7 +22,7 @@
     .review-card:hover {
         transform: scale(1.05);  
         box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2); 
-        background: #e7d730; 
+        background: #eedf3e; 
     }
 
     .review-content {
@@ -71,11 +71,11 @@
    <div class="card-img-top">
     <img src="<%= listing.image.url %>" alt="<%= listing.title %> Image" style="max-width: 75%;" onerror="this.onerror=null; this.src='/images/fallback-image.jpg';">
     </div> 
-    <p class="card-text">BY-<%= listing.owner.username %></p>
+    <p class="card-text"><strong>By-</strong><%= listing.owner.username %></p>
     <p class="card-text"><%= listing.description %></p>
     <p class="card-text">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
-    <p class="card-text"><%= listing.location %></p>
-    <p class="card-text"><%= listing.country %></p>
+    <p class="card-text"><strong>Location-</strong><%= listing.location %></p>
+    <p class="card-text"><strong>Country-</strong><%= listing.country %></p>
     <!-- Authorization  -->
     <% if (currentUser && currentUser._id.equals(listing.owner._id)) { %>
         <br>
@@ -140,7 +140,7 @@
                     <div class="review-card">
                         <div class="review-content">
                             <% if (review.author && review.author.username) { %>
-                                <h5 class="review-text">By- @<%= review.author.username %></h5>
+                                <h5 class="review-text" style="word-wrap: break-word; overflow-wrap: break-word;">By- @<%= review.author.username %></h5>
                             <% } else { %>
                                 <h5 class="review-text">Anonymous</h5>
                             <% } %>

@@ -27,10 +27,14 @@
                 <li><a href="/contact">Contact Us</a></li>
             </ul>
         </nav>
-        <div class="search-bar">
-            <input type="text" placeholder="Search destinations...">
-            <button type="submit"><i class="fas fa-search"></i></button>
+
+         <div class="search-bar">
+         <form action="/search" method="GET">
+          <input type="text" name="q" placeholder="Search destinations...">
+          <button type="submit"><i class="fas fa-search"></i></button>
+         </form>
         </div>
+        
         <div class="cta">
             <a href="/listings/new" class="btn">Add Listing</a>
         </div>
@@ -39,7 +43,7 @@
                 <a href="/logout" class="btn btn-outline-danger" >Logout</a>
                 <link rel="stylesheet" href="/styles.css">
                 <div class="user-container">
-                    <p> <%= currentUser.username %></p>
+                    <p style="height: 15px;"> <%= currentUser.username %></p>
                 </div>
             <% } else { %>
                 <a href="/signup" class="btn" style="background-color: #00ADB5; color: white;">Signup</a>
