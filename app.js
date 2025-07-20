@@ -18,6 +18,8 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require('passport');
 const Listing = require('./models/listing'); 
+const helmet = require("helmet");
+
 
 
 const LocalStrategy = require('passport-local');
@@ -34,6 +36,7 @@ const reviewRoutes = require('./routes/reviews.js');
 const userRouter = require('./routes/user.js');
 
 const app = express();
+app.use(helmet());
 app.engine('ejs', ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Optional: for clarity
@@ -51,6 +54,7 @@ const sessionOptions = {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
     },
 };
 app.use(session(sessionOptions));
@@ -83,7 +87,20 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch(err => {
     console.error("MongoDB connection error:", err);
 });
-
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://res.cloudinary.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'"],
+      },
+    },
+  })
+);
 
 
 function extractUrlFromImageField(imageField) {
@@ -108,9 +125,7 @@ app.get("/contact", (req, res) => {
 app.get("/about", (req, res) => {
     res.render('listings/about.ejs');
 });
-// app.get("/", (req, res) => {
-//     res.render('listings/home');
-// });
+
 app.get('/search', async (req, res) => {
     try {
         const query = req.query.q;
