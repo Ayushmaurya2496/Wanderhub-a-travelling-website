@@ -76,7 +76,7 @@
     <p class="card-text">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
     <p class="card-text"><strong>Location-</strong><%= listing.location %></p>
     <p class="card-text"><strong>Country-</strong><%= listing.country %></p>
-    <!-- Authorization  -->
+   
     <% if (currentUser && currentUser._id.equals(listing.owner._id)) { %>
         <br>
         <hr>
