@@ -61,15 +61,22 @@
     .delete-btn:active {
         transform: scale(0.95); 
     }
+    .card-img-top{
+        width: 80%;
+    }
+    
 </style>
 
 <body>
    
    
-    <div class="container update-listing-form">
-    <h1> <%= listing.title %></h1>
+<div class="container update-listing-form" style= "width: 100%;
+                                                    max-width: 1300px;
+                                                    min-width: 300px;
+                                                    background-color: #ececec;">  
+      <h1> <%= listing.title %></h1>
    <div class="card-img-top">
-    <img src="<%= listing.image.url %>" alt="<%= listing.title %> Image" style="max-width: 75%;" onerror="this.onerror=null; this.src='/images/fallback-image.jpg';">
+    <img src="<%= listing.image.url %>" alt="<%= listing.title %> Image" style="max-width: 70%;" onerror="this.onerror=null; this.src='/images/fallback-image.jpg';">
     </div> 
     <p class="card-text"><strong>By-</strong><%= listing.owner.username %></p>
     <p class="card-text"><%= listing.description %></p>
@@ -93,9 +100,6 @@
         <h4>LEAVE A REVIEW</h4>
         <% if(currentUser){ %>
         <form action="/listings/<%= listing.id %>/reviews" method="POST" class="needs-validation" novalidate>
-          
-
-
           
             <fieldset class="starability-slot">
                 <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
