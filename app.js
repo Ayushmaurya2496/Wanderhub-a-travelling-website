@@ -74,7 +74,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = (process.env.NODE_ENV || '').trim() === 'production' || Boolean(process.env.RENDER);
 
 // Fail fast if DB isn't connected (prevents 10s "buffering timed out" errors)
 mongoose.set('bufferCommands', false);
@@ -85,6 +85,12 @@ const primaryMongoUrl = process.env.MONGO_URL;
 async function connectMongo() {
     if (isProduction && !primaryMongoUrl) {
         throw new Error("Missing MONGO_URL in production environment (set it in Render -> Environment)");
+    }
+
+    if (isProduction && primaryMongoUrl && /127\.0\.0\.1|localhost/i.test(primaryMongoUrl)) {
+        throw new Error(
+            "MONGO_URL points to localhost, which will not work on Render. Set it to your MongoDB Atlas connection string."
+        );
     }
 
     const primaryLabel = primaryMongoUrl ? "MONGO_URL (remote/Atlas)" : "local MongoDB";
