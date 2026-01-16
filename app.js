@@ -82,6 +82,17 @@ mongoose.set('bufferCommands', false);
 const localMongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
 const primaryMongoUrl = process.env.MONGO_URL;
 
+function getSanitizedMongoHost(mongoUrl) {
+    if (!mongoUrl || typeof mongoUrl !== 'string') return null;
+    // Extract host portion without leaking credentials.
+    // Works for both mongodb:// and mongodb+srv:// forms.
+    const match = mongoUrl.match(/^mongodb\+srv:\/\/[^@/]+@([^/?#]+)|^mongodb:\/\/[^@/]+@([^/?#]+)/i);
+    if (match && match[1]) return match[1];
+    // If URI has no userinfo, still try to extract host.
+    const matchNoAuth = mongoUrl.match(/^mongodb\+srv:\/\/([^/?#]+)|^mongodb:\/\/([^/?#]+)/i);
+    return (matchNoAuth && matchNoAuth[1]) ? matchNoAuth[1] : null;
+}
+
 async function connectMongo() {
     if (isProduction && !primaryMongoUrl) {
         throw new Error("Missing MONGO_URL in production environment (set it in Render -> Environment)");
@@ -95,6 +106,11 @@ async function connectMongo() {
 
     const primaryLabel = primaryMongoUrl ? "MONGO_URL (remote/Atlas)" : "local MongoDB";
     const firstTryUrl = primaryMongoUrl || localMongoUrl;
+
+    if (primaryMongoUrl) {
+        const mongoHost = getSanitizedMongoHost(primaryMongoUrl);
+        if (mongoHost) console.log(`MongoDB host: ${mongoHost}`);
+    }
 
     try {
         console.log(`Connecting to MongoDB using ${primaryLabel}`);
@@ -129,6 +145,9 @@ async function connectMongo() {
             );
             console.error(
                 "Fix: check internet/VPN/proxy, try changing DNS (8.8.8.8 or 1.1.1.1), or use the non-SRV Atlas connection string (mongodb://...) from MongoDB Atlas."
+            );
+            console.error(
+                "Also double-check your MONGO_URL hostname for typos (common: cluster0 vs clustero) and remove any extra spaces/newlines in Render Environment variables."
             );
         }
         console.error("MongoDB connection error:", err);
