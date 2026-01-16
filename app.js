@@ -81,6 +81,7 @@ mongoose.set('bufferCommands', false);
 
 const localMongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
 const primaryMongoUrl = process.env.MONGO_URL;
+const fallbackMongoUrl = process.env.MONGO_URL_FALLBACK;
 
 function getSanitizedMongoHost(mongoUrl) {
     if (!mongoUrl || typeof mongoUrl !== 'string') return null;
@@ -111,6 +112,10 @@ async function connectMongo() {
         const mongoHost = getSanitizedMongoHost(primaryMongoUrl);
         if (mongoHost) console.log(`MongoDB host: ${mongoHost}`);
     }
+    if (fallbackMongoUrl) {
+        const fallbackHost = getSanitizedMongoHost(fallbackMongoUrl);
+        if (fallbackHost) console.log(`MongoDB fallback host: ${fallbackHost}`);
+    }
 
     try {
         console.log(`Connecting to MongoDB using ${primaryLabel}`);
@@ -124,6 +129,29 @@ async function connectMongo() {
             !isProduction &&
             Boolean(primaryMongoUrl) &&
             (err?.code === "ENOTFOUND" || err?.code === "ETIMEOUT" || err?.code === "ESERVFAIL");
+
+        const shouldTryNonSrvFallback =
+            isProduction &&
+            Boolean(primaryMongoUrl) &&
+            /^mongodb\+srv:\/\//i.test(primaryMongoUrl) &&
+            Boolean(fallbackMongoUrl) &&
+            (err?.code === "ENOTFOUND" || err?.code === "ESERVFAIL");
+
+        if (shouldTryNonSrvFallback) {
+            console.error(
+                "MongoDB SRV DNS lookup failed in production. Trying MONGO_URL_FALLBACK (non-SRV) ..."
+            );
+            try {
+                await mongoose.connect(fallbackMongoUrl, {
+                    serverSelectionTimeoutMS: 30000,
+                });
+                console.log("MongoDB connected successfully (fallback)");
+                return;
+            } catch (fallbackErr) {
+                console.error("MongoDB fallback connection error:", fallbackErr);
+                throw fallbackErr;
+            }
+        }
 
         if (shouldFallbackToLocal) {
             console.error(
