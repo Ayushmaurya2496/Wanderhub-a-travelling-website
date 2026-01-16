@@ -36,7 +36,6 @@ const reviewRoutes = require('./routes/reviews.js');
 const userRouter = require('./routes/user.js');
 
 const app = express();
-app.use(helmet());
 app.engine('ejs', ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Optional: for clarity
@@ -75,17 +74,52 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+const localMongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
+const primaryMongoUrl = process.env.MONGO_URL;
 
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => {
-    console.log(" MongoDB Atlas connected successfully");
-})
-.catch(err => {
-    console.error("MongoDB connection error:", err);
+async function connectMongo() {
+    const primaryLabel = primaryMongoUrl ? "MONGO_URL (remote/Atlas)" : "local MongoDB";
+    const firstTryUrl = primaryMongoUrl || localMongoUrl;
+
+    try {
+        console.log(`Connecting to MongoDB using ${primaryLabel}`);
+        await mongoose.connect(firstTryUrl);
+        console.log("MongoDB connected successfully");
+        return;
+    } catch (err) {
+        const shouldFallbackToLocal =
+            Boolean(primaryMongoUrl) &&
+            (err?.code === "ENOTFOUND" || err?.code === "ETIMEOUT" || err?.code === "ESERVFAIL");
+
+        if (shouldFallbackToLocal) {
+            console.error(
+                "MongoDB Atlas connection failed due to DNS/network. Falling back to local MongoDB (127.0.0.1:27017)."
+            );
+            try {
+                await mongoose.connect(localMongoUrl);
+                console.log("MongoDB connected successfully (local)");
+                return;
+            } catch (fallbackErr) {
+                console.error("Local MongoDB connection error:", fallbackErr);
+                throw fallbackErr;
+            }
+        }
+
+        if (err && err.code === "ENOTFOUND" && typeof err.hostname === "string") {
+            console.error(
+                "MongoDB DNS lookup failed (ENOTFOUND). This usually means your network/DNS cannot resolve the Atlas hostname or SRV records."
+            );
+            console.error(
+                "Fix: check internet/VPN/proxy, try changing DNS (8.8.8.8 or 1.1.1.1), or use the non-SRV Atlas connection string (mongodb://...) from MongoDB Atlas."
+            );
+        }
+        console.error("MongoDB connection error:", err);
+        throw err;
+    }
+}
+
+connectMongo().catch(() => {
+    // Errors are already logged above.
 });
 app.use(
   helmet({
@@ -94,7 +128,14 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
-        imgSrc: ["'self'", "data:", "blob:", "https://res.cloudinary.com"],
+                imgSrc: [
+                    "'self'",
+                    "data:",
+                    "blob:",
+                    "https://res.cloudinary.com",
+                    "https://images.unsplash.com",
+                    "https://plus.unsplash.com"
+                ],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         connectSrc: ["'self'"],
       },
