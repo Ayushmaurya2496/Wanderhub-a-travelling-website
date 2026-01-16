@@ -74,20 +74,32 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Fail fast if DB isn't connected (prevents 10s "buffering timed out" errors)
+mongoose.set('bufferCommands', false);
+
 const localMongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
 const primaryMongoUrl = process.env.MONGO_URL;
 
 async function connectMongo() {
+    if (isProduction && !primaryMongoUrl) {
+        throw new Error("Missing MONGO_URL in production environment (set it in Render -> Environment)");
+    }
+
     const primaryLabel = primaryMongoUrl ? "MONGO_URL (remote/Atlas)" : "local MongoDB";
     const firstTryUrl = primaryMongoUrl || localMongoUrl;
 
     try {
         console.log(`Connecting to MongoDB using ${primaryLabel}`);
-        await mongoose.connect(firstTryUrl);
+        await mongoose.connect(firstTryUrl, {
+            serverSelectionTimeoutMS: 30000,
+        });
         console.log("MongoDB connected successfully");
         return;
     } catch (err) {
         const shouldFallbackToLocal =
+            !isProduction &&
             Boolean(primaryMongoUrl) &&
             (err?.code === "ENOTFOUND" || err?.code === "ETIMEOUT" || err?.code === "ESERVFAIL");
 
@@ -118,8 +130,18 @@ async function connectMongo() {
     }
 }
 
-connectMongo().catch(() => {
-    // Errors are already logged above.
+async function start() {
+    await connectMongo();
+
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
+        console.log(`Server running on http://localhost:${port}`);
+    });
+}
+
+start().catch((err) => {
+    console.error("Fatal startup error:", err);
+    process.exit(1);
 });
 app.use(
   helmet({
@@ -220,11 +242,4 @@ app.get("/", async (req, res) => {
         console.error("Error in getTopListings:", err);
         res.status(500).send("Something went wrong");
     }
-});
-
-
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-    console.log(`Server running on http://localhost:${port}`);
-
 });
