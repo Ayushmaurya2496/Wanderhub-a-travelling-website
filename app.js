@@ -121,10 +121,25 @@ async function connectMongo() {
         console.log(`Connecting to MongoDB using ${primaryLabel}`);
         await mongoose.connect(firstTryUrl, {
             serverSelectionTimeoutMS: 30000,
+            family: 4,
         });
         console.log("MongoDB connected successfully");
         return;
     } catch (err) {
+        // Print deeper MongoDB driver details (helps distinguish whitelist vs auth vs TLS vs DNS)
+        if (err?.name === 'MongooseServerSelectionError' && err?.reason?.servers) {
+            try {
+                const servers = Array.from(err.reason.servers.entries());
+                for (const [address, description] of servers) {
+                    const driverErr = description?.error;
+                    if (driverErr?.message) {
+                        console.error(`MongoDB server ${address} error: ${driverErr.message}`);
+                    }
+                }
+            } catch {
+                // ignore diagnostics errors
+            }
+        }
         const shouldFallbackToLocal =
             !isProduction &&
             Boolean(primaryMongoUrl) &&
@@ -144,6 +159,7 @@ async function connectMongo() {
             try {
                 await mongoose.connect(fallbackMongoUrl, {
                     serverSelectionTimeoutMS: 30000,
+                    family: 4,
                 });
                 console.log("MongoDB connected successfully (fallback)");
                 return;
@@ -158,7 +174,10 @@ async function connectMongo() {
                 "MongoDB Atlas connection failed due to DNS/network. Falling back to local MongoDB (127.0.0.1:27017)."
             );
             try {
-                await mongoose.connect(localMongoUrl);
+                await mongoose.connect(localMongoUrl, {
+                    serverSelectionTimeoutMS: 30000,
+                    family: 4,
+                });
                 console.log("MongoDB connected successfully (local)");
                 return;
             } catch (fallbackErr) {
