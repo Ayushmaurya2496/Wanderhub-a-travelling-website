@@ -47,10 +47,8 @@
     background: #0056b3;
 }
 </style>
-<body>
-    
-
-<div class="hero-section">
+<main class="home-page">
+<div class="hero-section home-content-width">
     <div class="content">
         <h1>Welcome to Wanderlust</h1>
         <p>Discover breathtaking destinations, hidden gems, and unforgettable experiences.</p>
@@ -58,23 +56,24 @@
     </div>
 
 </div>
- <h2 class="text-center my-5"> Top Rated Listings</h2>
+ <h2 class="home-section-title home-content-width">Explore the best-rated stays and destinations</h2>
 
-    <div class="container">
-        <div class="row">
+     <div class="container home-content-width home-listings-content">
+        <div class="row home-listings-grid">
             <% if (topListings && topListings.length > 0) { %>
                 <% topListings.forEach(function(listing) { %>
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="home-listing-item">
                         <div class="card listing-card" style="width: 100%;">
                             <a href="/listings/<%= listing._id %>">
-                                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy">
                             </a>
                             <div class="card-body">
                                 <p class="card-text">
                                     <b><%= listing.title %></b><br>
-                                    ₹<%= listing.price %>/night<br>
-                                     <%= listing.rating  %>  <%= listing.totalReviews %>⭐ Reviews
+                                    ₹<%= Number(listing.price).toLocaleString("en-IN") %> / night<br>
+                                    <span class="card-rating">★ <%= listing.rating ? listing.rating.toFixed(1) : "No rating" %> · <%= listing.totalReviews %> <%= listing.totalReviews === 1 ? "review" : "reviews" %></span>
                                 </p>
+                                <a href="/listings/<%= listing._id %>" class="view-details">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -121,4 +120,4 @@
 
 
 
-</body>
+</main>

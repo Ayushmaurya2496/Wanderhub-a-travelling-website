@@ -12,11 +12,12 @@ module.exports.createReview = async (req, res) => {
      const newReview = new Review({
         comment: req.body.review.comment,
          rating: req.body.review.rating,
-         author: req.user._id
+                 author: req.user._id,
+                 status: "pending"
            });
     listing.reviews.push(newReview);
     await newReview.save();
-    req.flash("success","New review  added sucessfully");
+    req.flash("success", "Review submitted and is awaiting listing owner approval");
     await listing.save();
     console.log("Saved successfully");
     res.redirect(`/listings/${listing._id}`);
@@ -34,3 +35,16 @@ module.exports.destroyReview=async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 }
+
+module.exports.approveReview = async (req, res) => {
+    const { id, reviewId } = req.params;
+
+    if (!req.listing.owner.equals(req.user._id)) {
+        req.flash("error", "Only the listing owner can approve reviews");
+        return res.redirect(`/listings/${id}`);
+    }
+
+    await Review.findByIdAndUpdate(reviewId, { status: "approved" });
+    req.flash("success", "Review approved");
+    res.redirect(`/listings/${id}`);
+};

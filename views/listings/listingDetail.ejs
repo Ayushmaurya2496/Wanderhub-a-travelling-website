@@ -40,6 +40,19 @@
         font-weight: bold;
         color: #0cbaef;
     }
+    .rating-summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0 20px;
+    }
+    .rating-stars {
+        color: #f4b400;
+        letter-spacing: 2px;
+    }
+    .pending-review {
+        border-left: 4px solid #f0ad4e;
+    }
     .delete-btn {
         background-color: #dc3545; 
         color: white;
@@ -70,19 +83,40 @@
 <body>
    
    
-<div class="container update-listing-form" style= "width: 100%;
+<div class="container listing-detail-page update-listing-form" style= "width: 100%;
                                                     max-width: 1300px;
                                                     min-width: 300px;
-                                                    background-color: #ececec;">  
+                                                    background-color: #f7f8fa;">  
       <h1> <%= listing.title %></h1>
+            <% if (listing.category) { %>
+                <p class="card-text"><strong>Category-</strong> <%= listing.category %></p>
+            <% } %>
    <div class="card-img-top">
-    <img src="<%= listing.image.url %>" alt="<%= listing.title %> Image" style="max-width: 70%;" onerror="this.onerror=null; this.src='/css/images/fallback-image.jpg';">
+    <img src="<%= listing.image.url %>" class="listing-detail-image" alt="<%= listing.title %> Image" loading="lazy" onerror="this.onerror=null; this.src='/css/images/fallback-image.jpg';">
     </div> 
-    <p class="card-text"><strong>By-</strong><%= listing.owner.username %></p>
+    <p class="card-text"><strong>By-</strong>
+        <a href="/profile/showed/<%= listing.owner._id %>"><%= listing.owner.username %></a>
+    </p>
     <p class="card-text"><%= listing.description %></p>
     <p class="card-text">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
     <p class="card-text"><strong>Location-</strong><%= listing.location %></p>
     <p class="card-text"><strong>Country-</strong><%= listing.country %></p>
+    <% if (currentUser) { %>
+        <% if (isSaved) { %>
+            <form method="POST" action="/saved/<%= listing._id %>?_method=DELETE">
+                <button type="submit" class="btn btn-outline-danger">Remove from Saved</button>
+            </form>
+        <% } else { %>
+            <form method="POST" action="/saved/<%= listing._id %>">
+                <button type="submit" class="btn btn-outline-primary">Save to Wishlist</button>
+            </form>
+        <% } %>
+    <% } %>
+    <div class="rating-summary" aria-label="Average rating <%= averageRating.toFixed(1) %> out of 5">
+        <span class="rating-stars"><%= "★".repeat(Math.round(averageRating)) %><%= "☆".repeat(5 - Math.round(averageRating)) %></span>
+        <strong><%= averageRating ? averageRating.toFixed(1) : "No rating" %></strong>
+        <span>(<%= approvedReviewCount %> approved reviews)</span>
+    </div>
    
     <% if (currentUser && currentUser._id.equals(listing.owner._id)) { %>
         <br>
@@ -141,10 +175,13 @@
         <div class="review-container">
             <% if(listing.reviews.length > 0) { %>
                 <% for(let review of listing.reviews) { %>
-                    <div class="review-card">
+                    <% const isApproved = review.status === "approved" || !review.status; %>
+                    <% const isListingOwner = currentUser && listing.owner && currentUser._id.equals(listing.owner._id); %>
+                    <% if (isApproved || isListingOwner) { %>
+                    <div class="review-card <%= isApproved ? '' : 'pending-review' %>">
                         <div class="review-content">
                             <% if (review.author && review.author.username) { %>
-                                <h5 class="review-text" style="word-wrap: break-word; overflow-wrap: break-word;">By- @<%= review.author.username %></h5>
+                                <h5 class="review-text" style="word-wrap: break-word; overflow-wrap: break-word;">By- @<a href="/profile/showed/<%= review.author._id %>"><%= review.author.username %></a></h5>
                             <% } else { %>
                                 <h5 class="review-text">Anonymous</h5>
                             <% } %>
@@ -153,9 +190,10 @@
                             
                             
 
-                            <p class="starability-result" data-rating="<%= review.rating %>">
-                                Rated: 3 stars
+                                                        <p class="starability-result" data-rating="<%= review.rating %>" aria-label="Rated <%= review.rating %> out of 5">
+                                                                Rated: <%= review.rating %> stars
                               </p>
+                                                            <% if (!isApproved) { %><p class="text-warning"><strong>Pending moderation</strong></p><% } %>
                               <p class="card">
                                 <%= review.comment %>
                             </p>
@@ -163,17 +201,18 @@
                        
   
         
-                        <% if (
-                            currentUser && (
-                                (listing.owner && currentUser._id.equals(listing.owner._id)) || 
-                                (review.author && currentUser._id.equals(review.author._id))
-                            )
-                        ) { %>
+                        <% if (isListingOwner && !isApproved) { %>
+                            <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>/approve?_method=PUT">
+                                <button class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                        <% } %>
+                        <% if (currentUser && (isListingOwner || (review.author && currentUser._id.equals(review.author._id)))) { %>
                             <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
-                                <button class="delete-btn">🗑 Delete</button>
+                                <button class="delete-btn">Delete</button>
                             </form>
                         <% } %>
                     </div>
+                    <% } %>
                 <% } %>
             <% } else { %>
                 <p>No Reviews yet. Be the first to Review!</p>

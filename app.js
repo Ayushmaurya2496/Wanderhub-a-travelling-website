@@ -46,14 +46,15 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 
 const sessionOptions = {
-    secret: "mysupersecretcode",
+    secret: process.env.SESSION_SECRET || "mysupersecretcode",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    rolling: true,
     cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
     },
 };
 app.use(session(sessionOptions));
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currentUser = req.user|| null; 
+    res.locals.currentPath = req.path;
     
     next();
 });
@@ -291,12 +293,23 @@ app.get("/", async (req, res) => {
                     from: 'reviews',
                     localField: 'reviews',
                     foreignField: '_id',
-                    as: 'reviewData'
+                    as: 'reviewData',
+                    pipeline: [
+                        {
+                            $match: {
+                                $or: [
+                                    { status: "approved" },
+                                    { status: { $exists: false } }
+                                ]
+                            }
+                        }
+                    ]
                 }
             },
             {
                 $addFields: {
-                    totalReviews: { $size: "$reviewData" }
+                    totalReviews: { $size: "$reviewData" },
+                    rating: { $avg: "$reviewData.rating" }
                 }
             },
             {

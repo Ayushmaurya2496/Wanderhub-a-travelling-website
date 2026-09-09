@@ -6,8 +6,20 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
-    }
+        unique: true,
+        trim: true,
+        lowercase: true
+    },
+    bio: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+        default: ""
+    },
+    savedListings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Listing"
+    }]
 });
 
 //  passport-local-mongoose plugin to handle authentication

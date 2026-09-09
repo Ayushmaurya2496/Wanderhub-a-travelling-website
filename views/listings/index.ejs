@@ -1,26 +1,61 @@
 <% layout('layouts/boilerplate') %>
-<BR>
-    
-<br>
-<body>
-  
-  
-    <form method="GET" action="/listings/new"></form>
+<main class="listings-page">
 
-    <div class="container">
-        
-        <div class="row">
-            <% for (let listing of alllistings) { %>
-                <div class="col-lg-4 col-md-6 mb-4">
+    <section class="listings-toolbar container mb-4">
+        <div class="listings-heading">
+            <p class="listings-eyebrow">Explore destinations</p>
+            <% if (selectedCategory) { %>
+                <p class="active-filter">Showing <strong><%= selectedCategory %></strong> <span>Found <%= alllistings.length %> places</span></p>
+            <% } %>
+        </div>
+        <form method="GET" action="/listings" class="category-filter-form">
+            <label for="category-filter">Filter by category</label>
+            <div class="category-filter-controls">
+                <select id="category-filter" name="category" onchange="this.form.submit()">
+                    <% if (selectedCategory) { %>
+                        <option value="<%= selectedCategory %>" selected><%= selectedCategory %></option>
+                    <% } else { %>
+                        <option value="">All categories</option>
+                        <% listingCategories.forEach((category) => { %>
+                            <option value="<%= category %>"><%= category %></option>
+                        <% }); %>
+                    <% } %>
+                </select>
+                <button type="submit" class="apply-filter">Apply</button>
+                <% if (selectedCategory) { %>
+                    <a href="/listings" class="clear-filter" aria-label="Clear category filter">Clear</a>
+                <% } %>
+            </div>
+            <% if (selectedCategory) { %>
+                <span class="selected-filter">Selected: <strong><%= selectedCategory %></strong></span>
+            <% } %>
+        </form>
+    </section>
+
+    <div class="container listings-content">
+        <div class="row listings-grid">
+            <% if (!alllistings.length) { %>
+                <div class="col-12">
+                    <div class="no-listings-message">
+                        <h2>No listings found</h2>
+                        <p>There are no listings in <strong><%= selectedCategory %></strong> yet.</p>
+                        <a href="/listings" class="btn btn-outline-primary">Show all listings</a>
+                    </div>
+                </div>
+            <% } %>
+            <% for (let [index, listing] of alllistings.entries()) { %>
+                <div class="listing-result" style="--listing-delay: <%= index * 70 %>ms;">
                     <div class="card listing-card" style="width: 100%;">
                         <a href="/listings/<%= listing._id %>">
-                            <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image">
+                            <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy">
                         </a>
                         <div class="card-body">
                             <p class="card-text">
                                 <b><%= listing.title %></b><br>
-                                <%= listing.price %>/night
+                                <% if (listing.category) { %><span><%= listing.category %></span><br><% } %>
+                                ₹<%= Number(listing.price).toLocaleString("en-IN") %> / night
                             </p>
+                            <a href="/listings/<%= listing._id %>" class="view-details">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -63,4 +98,4 @@ style="
   <iframe src="https://ayush-chatbot.vercel.app" style="width:100%; height:100%; border:none;"></iframe>
 </div>
     </div>
-</body>
+</main>

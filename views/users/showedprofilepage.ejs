@@ -1,0 +1,98 @@
+<% layout('layouts/boilerplate') %>
+
+<main class="profile-page">
+    <section class="profile-hero card listing-card">
+        <div class="profile-hero-content">
+            <div>
+                <div>
+                    <p class="text-muted mb-1">Wanderlust profile</p>
+                    <h1 class="mb-2"><%= profileUser.username %></h1>
+                    <p class="mb-0"><%= profileUser.email %></p>
+                    <% if (profileUser.bio) { %>
+                        <p class="mt-3 mb-0"><%= profileUser.bio %></p>
+                    <% } %>
+                </div>
+                <% if (isOwnProfile) { %>
+                    <a href="/profile" class="btn btn-outline-primary">Edit Profile</a>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <section class="profile-stats-grid">
+        <div class="profile-stat card listing-card">
+            <div class="card listing-card h-100">
+                <div class="card-body text-center p-4">
+                    <strong class="d-block fs-2"><%= listings.length %></strong>
+                    <span class="text-muted">Total listings</span>
+                </div>
+            </div>
+        </div>
+        <div class="profile-stat card listing-card">
+            <div class="card listing-card h-100">
+                <div class="card-body text-center p-4">
+                    <strong class="d-block fs-2"><%= savedListings.length %></strong>
+                    <span class="text-muted">Saved places</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="profile-section">
+        <div class="profile-section-heading">
+            <h2 class="h4 mb-0">User's own listings</h2>
+            <% if (isOwnProfile) { %>
+                <a href="/listings/new" class="btn btn-primary">Add Listing</a>
+            <% } %>
+        </div>
+        <% if (listings.length) { %>
+            <div class="profile-listings-grid">
+                <% listings.forEach((listing) => { %>
+                    <div class="profile-listing-item">
+                        <article class="card listing-card h-100">
+                            <a href="/listings/<%= listing._id %>">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy" onerror="this.onerror=null; this.src='/css/images/fallback-image.jpg';">
+                            </a>
+                            <div class="card-body d-flex flex-column p-3">
+                                <h3 class="h5"><%= listing.title %></h3>
+                                <p class="card-text"><%= listing.location %>, <%= listing.country %></p>
+                                <a href="/listings/<%= listing._id %>" class="btn btn-outline-primary mt-auto">View Listing</a>
+                            </div>
+                        </article>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>You have not added any listings yet.</p>
+        <% } %>
+    </section>
+
+    <section class="profile-section">
+        <div class="profile-section-heading">
+            <h2 class="h4 mb-0">Saved places</h2>
+            <% if (isOwnProfile) { %>
+                <a href="/saved" class="btn btn-outline-primary">View All Saved</a>
+            <% } %>
+        </div>
+        <% if (savedListings.length) { %>
+            <div class="profile-listings-grid">
+                <% savedListings.forEach((listing) => { %>
+                    <div class="profile-listing-item">
+                        <article class="card listing-card h-100">
+                            <a href="/listings/<%= listing._id %>">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy" onerror="this.onerror=null; this.src='/css/images/fallback-image.jpg';">
+                            </a>
+                            <div class="card-body d-flex flex-column p-3">
+                                <h3 class="h5"><%= listing.title %></h3>
+                                <p class="card-text"><%= listing.location %>, <%= listing.country %></p>
+                                <a href="/listings/<%= listing._id %>" class="btn btn-outline-primary mt-auto">View Place</a>
+                            </div>
+                        </article>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>You have not saved any places yet.</p>
+        <% } %>
+    </section>
+</main>

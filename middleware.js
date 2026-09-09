@@ -15,8 +15,9 @@ module.exports.isLoggedIn = (req, res, next) => {
 };
 module.exports.validateListing = (req, res, next) => {
     const { title, price } = req.body;
-    if (!title || !price) {
-        req.flash("error", "Title and Price are required!");
+    const numericPrice = Number(price);
+    if (!title || !Number.isFinite(numericPrice) || numericPrice <= 0) {
+        req.flash("error", "Title and a positive price are required!");
         return res.redirect("back");
     }
     next();
@@ -70,4 +71,26 @@ module.exports.isAuthor = async (req, res, next) => {
     }
 
     next();
+};
+
+module.exports.isReviewAuthorOrOwner = async (req, res, next) => {
+    const { id, reviewId } = req.params;
+    const [listing, review] = await Promise.all([
+        Listing.findById(id),
+        Review.findById(reviewId)
+    ]);
+
+    if (!listing || !review || !listing.reviews.some((listingReviewId) => listingReviewId.equals(review._id))) {
+        req.flash("error", "Review not found");
+        return res.redirect(`/listings/${id}`);
+    }
+
+    if (listing.owner.equals(req.user._id) || review.author.equals(req.user._id)) {
+        req.listing = listing;
+        req.review = review;
+        return next();
+    }
+
+    req.flash("error", "You are not authorized to manage this review");
+    return res.redirect(`/listings/${id}`);
 };

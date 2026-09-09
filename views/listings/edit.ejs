@@ -3,34 +3,70 @@
 <div class="container add-listing-form"> 
     <h3>Update Post</h3>
     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" class="needs-validation">
+        <div class="form-group mb-3">
+            <label for="category">Category <span class="required-mark" aria-hidden="true">*</span></label>
+            <select id="category" name="category" class="form-select" required>
+                <option value="None" <%= listing.category === "None" ? "selected" : "" %>>None</option>
+                <option <%= listing.category === "Beaches" ? "selected" : "" %>>Beaches</option>
+                <option <%= listing.category === "Mountains" ? "selected" : "" %>>Mountains</option>
+                <option <%= listing.category === "Hill Stations" ? "selected" : "" %>>Hill Stations</option>
+                <option <%= listing.category === "Historical Places" ? "selected" : "" %>>Historical Places</option>
+                <option <%= listing.category === "Heritage Sites" ? "selected" : "" %>>Heritage Sites</option>
+                <option <%= listing.category === "Religious Places" ? "selected" : "" %>>Religious Places</option>
+                <option <%= listing.category === "Museums" ? "selected" : "" %>>Museums</option>
+                <option <%= listing.category === "Wildlife Sanctuaries" ? "selected" : "" %>>Wildlife Sanctuaries</option>
+                <option <%= listing.category === "National Parks" ? "selected" : "" %>>National Parks</option>
+                <option <%= listing.category === "Waterfalls" ? "selected" : "" %>>Waterfalls</option>
+                <option <%= listing.category === "Lakes" ? "selected" : "" %>>Lakes</option>
+                <option <%= listing.category === "Rivers" ? "selected" : "" %>>Rivers</option>
+                <option <%= listing.category === "Islands" ? "selected" : "" %>>Islands</option>
+                <option <%= listing.category === "Deserts" ? "selected" : "" %>>Deserts</option>
+                <option <%= listing.category === "Adventure Activities" ? "selected" : "" %>>Adventure Activities</option>
+                <option <%= listing.category === "Amusement Parks" ? "selected" : "" %>>Amusement Parks</option>
+                <option <%= listing.category === "Cultural Attractions" ? "selected" : "" %>>Cultural Attractions</option>
+                <option <%= listing.category === "Shopping Places" ? "selected" : "" %>>Shopping Places</option>
+                <option <%= listing.category === "Food and Dining" ? "selected" : "" %>>Food and Dining</option>
+                <option <%= listing.category === "Eco-Tourism" ? "selected" : "" %>>Eco-Tourism</option>
+                <option <%= listing.category === "Family Destinations" ? "selected" : "" %>>Family Destinations</option>
+                <option <%= listing.category === "Romantic Getaways" ? "selected" : "" %>>Romantic Getaways</option>
+                <option <%= listing.category === "Photography Spots" ? "selected" : "" %>>Photography Spots</option>
+                <option <%= listing.category === "Camping Sites" ? "selected" : "" %>>Camping Sites</option>
+                <option <%= listing.category === "Wellness and Spa" ? "selected" : "" %>>Wellness and Spa</option>
+                <option <%= listing.category === "Offbeat Destinations" ? "selected" : "" %>>Offbeat Destinations</option>
+            </select>
+            <div class="invalid-feedback">Please select a category.</div>
+        </div>
         
         <div class="form-group">
-            <label for="title">Title</label>
+            <label for="title">Title <span class="required-mark" aria-hidden="true">*</span></label>
             <input type="text" class="form-control" name="title" value="<%= listing.title %>" required />
         </div>
 
         <div class="form-group">
-            <label for="description">Description</label>
+            <label for="description">Description <span class="required-mark" aria-hidden="true">*</span></label>
             <textarea name="description" class="form-control" required><%= listing.description %></textarea>
         </div>
 
         <div class="form-group">
-            <label for="image">Image URL</label>
+            <label for="image">Image URL <span class="required-mark" aria-hidden="true">*</span></label>
             <input type="text" class="form-control" name="image" value="<%= listing.image.url %>" required />
         </div>
 
         <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" name="price" value="<%= listing.price %>" required />
+            <label for="price">Price <span class="required-mark" aria-hidden="true">*</span></label>
+            <div class="price-input-group">
+                <span class="currency-prefix" aria-hidden="true">₹</span>
+                <input type="number" class="form-control" name="price" id="price" value="<%= listing.price %>" min="0.01" max="1000000" step="0.01" inputmode="decimal" required />
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="country">Country</label>
+            <label for="country">Country <span class="required-mark" aria-hidden="true">*</span></label>
             <input type="text" class="form-control" name="country" value="<%= listing.country %>" required />
         </div>
 
         <div class="form-group">
-            <label for="location">Location</label>
+            <label for="location">Location <span class="required-mark" aria-hidden="true">*</span></label>
             <input type="text" class="form-control" name="location" value="<%= listing.location %>" required />
         </div>
 

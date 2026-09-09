@@ -1,34 +1,36 @@
 <% layout('layouts/boilerplate') %>
 
-<br>
-
-<body>
-    <div class="container">
-        <h2 class="mb-4">Search results for "<%= query %>"</h2>
+<main class="search-page">
+    <div class="container listings-content">
+        <h2 class="search-results-title">Search results for "<%= query %>"</h2>
 
         <% if (listings.length === 0) { %>
-            <p>No destinations found for your search.</p>
+            <div class="no-listings-message">
+                <h2>No destinations found</h2>
+                <p>Try searching for another city, country, or destination.</p>
+            </div>
         <% } else { %>
-            <div class="row">
-                <% for (let listing of listings) { %>
-                    <div class="col-lg-4 col-md-6 mb-4">
+            <div class="row listings-grid">
+                <% for (let [index, listing] of listings.entries()) { %>
+                    <div class="listing-result" style="--listing-delay: <%= index * 70 %>ms;">
                         <div class="card listing-card" style="width: 100%;">
                             <a href="/listings/<%= listing._id %>">
-                                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy">
                             </a>
                             <div class="card-body">
                                 <p class="card-text">
                                     <b><%= listing.title %></b><br>
-                                    ₹<%= listing.price %>/night<br>
+                                    ₹<%= Number(listing.price).toLocaleString("en-IN") %> / night<br>
                                     <small class="text-muted">📍 <%= listing.location %>, <%= listing.country %></small>
                                 </p>
+                                <a href="/listings/<%= listing._id %>" class="view-details">View Details</a>
                             </div>
                         </div>
                     </div>
                 <% } %>
             </div>
         <% } %>
-        <a href="/listings" class="btn btn-secondary my-3">⬅ Back to All Listings</a>
+        <a href="/listings" class="btn btn-secondary search-back-button">Back to All Listings</a>
 
     </div>
-</body>
+    </main>

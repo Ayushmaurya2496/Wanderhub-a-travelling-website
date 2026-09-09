@@ -8,6 +8,11 @@ const reviewSchema = new Schema({
         min: 1,
         max: 5
     },
+    status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending"
+    },
     createdAt: {
         type: Date,
         default: Date.now()

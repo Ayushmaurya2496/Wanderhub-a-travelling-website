@@ -16,6 +16,7 @@ const listingSchema = new Schema({
     author: String,
     price: {
         type: Number,  
+        min: 0.01,
     },
     date: {
         type: Date,

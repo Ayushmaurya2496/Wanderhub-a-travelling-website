@@ -1,9 +1,51 @@
 const Listing = require("../models/listing");
+const User = require("../models/user");
+
+const listingCategories = [
+    "None",
+    "Beaches",
+    "Mountains",
+    "Hill Stations",
+    "Historical Places",
+    "Heritage Sites",
+    "Religious Places",
+    "Museums",
+    "Wildlife Sanctuaries",
+    "National Parks",
+    "Waterfalls",
+    "Lakes",
+    "Rivers",
+    "Islands",
+    "Deserts",
+    "Adventure Activities",
+    "Amusement Parks",
+    "Cultural Attractions",
+    "Shopping Places",
+    "Food and Dining",
+    "Eco-Tourism",
+    "Family Destinations",
+    "Romantic Getaways",
+    "Photography Spots",
+    "Camping Sites",
+    "Wellness and Spa",
+    "Offbeat Destinations"
+];
 
 module.exports.index = async (req, res) => {
     try {
-        const alllistings = await Listing.find({});
-        res.render("listings/index.ejs", { alllistings });
+        const requestedCategory = typeof req.query.category === "string"
+            ? req.query.category.trim()
+            : "";
+        const selectedCategory = listingCategories.includes(requestedCategory)
+            ? requestedCategory
+            : "";
+        const filter = selectedCategory ? { category: selectedCategory } : {};
+        const alllistings = await Listing.find(filter).sort({ date: -1 });
+        res.render("listings/index.ejs", {
+            alllistings,
+            listingCategories,
+            selectedCategory
+        });
     } catch (err) {
         res.status(500).json({ error: 'Error fetching listings' });
     }
@@ -24,7 +66,17 @@ module.exports.showListing=async (req, res) => {
             ,}
         ).populate("owner");
         if (!listing) return res.status(404).send('Listing not found');
-        res.render('listings/listingDetail', { listing });
+
+        const approvedReviews = listing.reviews.filter((review) => review.status === "approved" || !review.status);
+        const approvedReviewCount = approvedReviews.length;
+        const averageRating = approvedReviewCount
+            ? approvedReviews.reduce((total, review) => total + review.rating, 0) / approvedReviews.length
+            : 0;
+        const isSaved = Boolean(req.user && await User.exists({
+            _id: req.user._id,
+            savedListings: listing._id
+        }));
+        res.render('listings/listingDetail', { listing, averageRating, approvedReviewCount, isSaved });
     } catch (err) {
         res.status(500).send('Error fetching listing');
     }
@@ -56,7 +108,7 @@ module.exports.editForm=async (req, res) => {
 module.exports.updateListing=async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedListing = await Listing.findByIdAndUpdate(id, req.body, { new: true });
+        const updatedListing = await Listing.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
         req.flash("success", "Listing Updated");
         res.redirect(`/listings/${id}`);
     } catch (err) {
@@ -66,7 +118,13 @@ module.exports.updateListing=async (req, res) => {
 }
 module.exports.destroyListing=async (req, res) => {
     try {
-        await Listing.findByIdAndDelete(req.params.id);
+        const deletedListing = await Listing.findByIdAndDelete(req.params.id);
+        if (deletedListing) {
+            await User.updateMany(
+                { savedListings: deletedListing._id },
+                { $pull: { savedListings: deletedListing._id } }
+            );
+        }
         req.flash("success","Deleted Listing");
         res.redirect('/listings');
         
